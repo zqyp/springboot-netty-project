@@ -1,0 +1,173 @@
+﻿/*
+package xdsei.wycg;
+
+import java.lang.reflect.Constructor;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import lombok.extern.slf4j.Slf4j;
+import xdsei.util.RuntimeMeter;
+import xdsei.util.Tools;
+import xdsei.wycg.importer.config.ImporterConfig;
+import xdsei.wycg.importer.main.BaseImporter.CanRetryImportException;
+import xdsei.wycg.importer.main.ImporterDefinations.ImporterClasses;
+import xdsei.wycg.importer.mapper.ImportDoneMapper;
+
+*/
+/**
+ * 文件导入主控类。
+ * 
+ * 该类型实例在应用启动类中配置为 BEAN.
+ * 
+ * <p>
+ * 该类型实例在创建后， 由外界（BEAN容器）自动调用 {@link #start()} 方法，以创建后台工作线程。<br/>
+ * 
+ * 后台线程轮询【待导入文件表】，对于得到的每条待导入文件记录，创建对应的文件导入对象，并与其合作
+ * 完成数据导入。
+ *//*
+
+@Slf4j
+public class ImportController implements Runnable {
+
+	static final String  appName="FileImporter controller";
+
+	@Autowired
+	private ImporterConfig        appConfig;         //应用配置对象
+
+	@Autowired
+	private ImportTodoService 	  importTodoService; // 待导入文件表 service
+
+	@Autowired
+	private ImportDoneMapper      importDoneMapper;  // 已导入文件表 mapper
+
+	@Autowired
+	private ImporterDefinations   importerDefinations; //所有文件导入类型定义
+
+	
+	*/
+/** 扫描【待导入文件】表的监测线程 *//*
+
+	private Thread monitorThread;
+	private volatile boolean  running = false;  //whether the monitor is running
+
+	
+	public ImportController() {
+		monitorThread = new Thread(this, "..............");
+	}
+	
+	*/
+/**
+	 * 准备检测目录数据.
+	 * <p>
+	 * 若当前对象是 spring-bean, 则应用层无需调用；否则应用层必须调用。
+	 * 且自动注入的属性已经填好。
+	 * 
+	 * @throws Exception 被监视的目录不可读
+	 *//*
+
+	@PostConstruct
+	public void start() throws Exception {
+		if(running)
+			return;
+
+		log.info("Try starting {}.", appName);
+		
+		running = true;  // 必须放到 子线程启动之前
+		
+		try {
+			一些初始化工作，这些工作是 启动线程内完成的，所以需要很短时间完成
+			一些复杂的初始化工作，可放到 run() 中完成
+			
+			monitorThread.start();
+
+		}catch(Exception ex) {
+			log.error("Create {}-worker failed:{}, cause-{}", appName, ex.getMessage(),
+					  ex.getCause() == null ? "nothing" : ex.getCause().getMessage()
+					);
+			throw ex;
+		}
+
+		log.info("{} started.", appName);
+	}
+
+	*/
+/**
+	 * 停止文件检测和上传
+	 * <p>
+	 * 若当前对象是 spring-bean, 则应用层无需调用；否则应用层必须调用。
+	 *//*
+
+	@PreDestroy
+	public void stop() {
+		if(!running)
+			return;
+
+		log.info("{} stopping...", appName);
+		
+		running = false;
+		
+		try { 
+			monitorThread.interrupt();  // 不可靠，但可以中断线程的阻塞性操作 
+		}
+		catch(Exception ex) {}
+		
+		try {
+			monitorThread.join(5000);
+		} catch (Exception e) {
+		}
+		
+		log.info("{} stopped.", appName);
+
+	}
+	
+	*/
+/** 查询进程是否应停止。 *//*
+
+	public boolean isStop() {
+		return !running;
+	}
+
+	
+	//轮询【待导入文件表】
+	@Override
+	public void run() {
+		
+	这里是后台工作线程 monitorThread 的工作，该函数结束，意味者该线程结束
+	
+	先初始化
+	
+	然后循环--这是后台工作线程要反复完成任务的控制
+		
+		long interval = this.appConfig.fileImporterProperties.getDbinterval() * 1000;
+		
+		//线程自身的主循环
+		for(;;) {
+			if( isStop() )  // 应用进程要停止，不干活了
+				return;
+
+			try {
+				try { Thread.sleep(interval); } catch (Exception ignored) { }
+
+				
+				执行一次循环体要完成的业务层操作 doWork()
+				
+				
+			}catch(Exception e) {
+				Tools.logException("ImportController.scanAndImport", e);
+			}
+		}
+	}
+	
+	
+	//执行一遍线程的工作任务
+	private void doWork(){
+	 ....................   
+	}
+}
+*/
