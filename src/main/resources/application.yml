@@ -2,6 +2,8 @@
 wycg:
   log-path: c:/tmp/si/log
 
+udp:
+  port: 6666
 
 related-process-program:
   netty:

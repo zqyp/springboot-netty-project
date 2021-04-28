@@ -19,7 +19,7 @@ import xdsei.wycg.autoExecuteProgram.config.NettyServerConfig;
  */
 @Component
 @Slf4j
-public class NettyTcpServer {
+public class TcpServer {
 
     /**
      * boss 线程组用于处理连接工作
@@ -34,7 +34,7 @@ public class NettyTcpServer {
     @Autowired
     private NettyServerConfig nettyServerConfig;
 
-    public NettyTcpServer() {}
+    public TcpServer() {}
 
     /**
      * 启动Netty Server
@@ -55,7 +55,7 @@ public class NettyTcpServer {
                     .handler(new LoggingHandler(LogLevel.INFO))
 
                     //设置连入服务端的 Client 的 SocketChannel 的处理器
-                    .childHandler(new NettyServerInitializer());
+                    .childHandler(new ServerInitializer());
             ChannelFuture future = bootstrap.bind(nettyServerConfig.getPort()).sync();
             if (future.isSuccess()) {
                 log.info("Netty Server start! port is"+ nettyServerConfig.getPort());

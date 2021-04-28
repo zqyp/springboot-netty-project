@@ -18,7 +18,7 @@ import xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler.ExternalProgramHand
  * @author ZQYP
  * @since 2021/4/10
  */
-public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
+public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final StringDecoder DECODER = new StringDecoder(CharsetUtil.UTF_8);
     private static final StringEncoder ENCODER = new StringEncoder(CharsetUtil.UTF_8);
