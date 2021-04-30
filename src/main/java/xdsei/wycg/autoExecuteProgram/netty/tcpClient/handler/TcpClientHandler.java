@@ -1,34 +1,42 @@
 package xdsei.wycg.autoExecuteProgram.netty.tcpClient.handler;
 
 
-import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
+import xdsei.wycg.autoExecuteProgram.netty.TcpCustomHeartbeatHandler;
 
 /**
  * @author ZPww
  * @since 2021/4/10
  */
 
-@Sharable
 @Slf4j
-public class TcpClientHandler extends ChannelInboundHandlerAdapter {
+public class TcpClientHandler extends TcpCustomHeartbeatHandler {
+
+    public TcpClientHandler() {
+        super("Client");
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("Channel Client Active .....");
     }
 
-    /**
-     *
-     * @param ctx ctx
-     * @param msg msg
-     * @throws Exception ex
-     */
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        log.info(msg.toString());
+    protected void channelReadCustom(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+        byte[] data = new byte[byteBuf.readableBytes() - 5];
+        byteBuf.skipBytes(5);
+        byteBuf.readBytes(data);
+        String content = new String(data);
+        log.info("[{}] get content [{}]", name, content);
+    }
+
+
+    @Override
+    protected void handleAllIdle(ChannelHandlerContext ctx) {
+        super.handleAllIdle(ctx);
+        sendPingMsg(ctx);
     }
 
     /**

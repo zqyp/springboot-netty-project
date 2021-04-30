@@ -29,7 +29,8 @@ public class ServerStart {
     /**
      *  PostConstruct在构造方法初始化、autowired之后执行
      */
-    public void nettyTcpServerStart() {
+    //@PostConstruct
+    public void tcpServerStart() {
         try {
             tcpServer.start();
         } catch (Exception e) {
@@ -38,7 +39,7 @@ public class ServerStart {
 
     }
 
-    public void nettyTcpServerDestroy() {
+    public void tcpServerDestroy() {
         try {
             tcpServer.destroy();
         } catch (Exception e) {
@@ -46,8 +47,9 @@ public class ServerStart {
         }
     }
 
+
     @PostConstruct
-    public void nettyUdpServerStart() {
+    public void udpServerStart() {
         try {
             udpServer.start();
         } catch (Exception e) {

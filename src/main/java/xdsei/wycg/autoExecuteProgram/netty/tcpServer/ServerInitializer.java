@@ -9,9 +9,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler.ClientMonitorHandler;
 import xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler.ExternalProgramHandler;
+import xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler.TcpServerHandler;
 
 /**
  * ChannelInitializer 继承了ChannelInboundHandlerAdapter，这是一个入站处理器.
@@ -39,15 +41,18 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         // 指定包以“}”结束，只接受“}”之前的，先这样吧，根据控制指定格式改
-        ByteBuf delimiter = Unpooled.copiedBuffer("}".getBytes());
+       /* ByteBuf delimiter = Unpooled.copiedBuffer("}".getBytes());
         // 超过2048个字符数会报异常
-        pipeline.addLast("frameTail", new DelimiterBasedFrameDecoder(2048, delimiter));
+        pipeline.addLast("frameTail", new DelimiterBasedFrameDecoder(2048, delimiter));*/
 
-        pipeline.addLast(DECODER);
-        pipeline.addLast(ENCODER);
+        /*pipeline.addLast(DECODER);
+        pipeline.addLast(ENCODER);*/
+
+        pipeline.addLast(new IdleStateHandler(10, 0, 0));
+        pipeline.addLast(new TcpServerHandler());
         // 业务逻辑实现类
-        pipeline.addLast(CLIENT_MONITOR_HANDLER);
-        pipeline.addLast(EXTERNAL_PROGRAM_HANDLER);
+        /*pipeline.addLast(CLIENT_MONITOR_HANDLER);
+        pipeline.addLast(EXTERNAL_PROGRAM_HANDLER);*/
 
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import xdsei.wycg.autoExecuteProgram.config.NettyServerConfig;
 
 /**
+ *
  * @author ZPww
  * @since 2021/4/10
  */
@@ -58,7 +59,7 @@ public class TcpServer {
                     .childHandler(new ServerInitializer());
             ChannelFuture future = bootstrap.bind(nettyServerConfig.getPort()).sync();
             if (future.isSuccess()) {
-                log.info("Netty Server start! port is"+ nettyServerConfig.getPort());
+                log.info("Netty TcpServer start! port is"+ nettyServerConfig.getPort());
             }
         } catch (Exception ex) {
             bossGroup.shutdownGracefully();

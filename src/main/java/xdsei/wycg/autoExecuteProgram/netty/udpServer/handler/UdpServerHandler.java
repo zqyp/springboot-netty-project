@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import xdsei.wycg.autoExecuteProgram.netty.UdpCustomHeartbeatHandler;
 
 
 /**
@@ -16,15 +17,18 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2021/4/28
  */
 @Slf4j
-public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+public class UdpServerHandler extends UdpCustomHeartbeatHandler {
+
+
+    public UdpServerHandler() {
+        super("Server");
+    }
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) {
-        String msgInfo = packet.content().toString(CharsetUtil.UTF_8);
+    protected void channelReadCustom(ChannelHandlerContext channelHandlerContext, DatagramPacket msg) {
+        String msgInfo = msg.content().toString(CharsetUtil.UTF_8);
         log.info("i am udpServer, i receive msg is [{}]", msgInfo);
-        String response = "hello sender, i receive your msg and response you...";
-        ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(response, CharsetUtil.UTF_8), packet.sender()));
     }
 
     @Override
