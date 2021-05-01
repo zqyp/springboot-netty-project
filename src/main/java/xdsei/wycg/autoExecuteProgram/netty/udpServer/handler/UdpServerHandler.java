@@ -1,12 +1,11 @@
 package xdsei.wycg.autoExecuteProgram.netty.udpServer.handler;
 
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import xdsei.wycg.autoExecuteProgram.netty.UdpCustomHeartbeatHandler;
+
 
 
 /**
@@ -19,16 +18,32 @@ import xdsei.wycg.autoExecuteProgram.netty.UdpCustomHeartbeatHandler;
 @Slf4j
 public class UdpServerHandler extends UdpCustomHeartbeatHandler {
 
-
     public UdpServerHandler() {
         super("Server");
     }
 
 
+    /**
+     * 处理读数据
+     * @param ctx ctx
+     * @param packet p
+     */
     @Override
-    protected void channelReadCustom(ChannelHandlerContext channelHandlerContext, DatagramPacket msg) {
-        String msgInfo = msg.content().toString(CharsetUtil.UTF_8);
+    public void channelReadCustom(ChannelHandlerContext ctx, DatagramPacket packet) {
+        String msgInfo = packet.content().toString(CharsetUtil.UTF_8);
         log.info("i am udpServer, i receive msg is [{}]", msgInfo);
+    }
+
+
+    /**
+     * 服务端可以在客户端掉线 指定时间（服务端读空闲时间） 后发现客户端掉线
+     * @param ctx ctx
+     */
+    @Override
+    protected void handleReaderIdle(ChannelHandlerContext ctx) {
+        super.handleReaderIdle(ctx);
+        // do something 很可能客户端掉线
+        log.error("Client disConnected...");
     }
 
     @Override

@@ -20,8 +20,11 @@ import xdsei.wycg.autoExecuteProgram.netty.udpServer.handler.UdpServerHandler;
 @Slf4j
 public class UdpServer {
 
-    @Value("${udp.port}")
-    private int port;
+    @Value("${udp.server.ip}")
+    private String udpServerIp;
+
+    @Value("${udp.server.port}")
+    private int udpServerPort;
 
 
     /**
@@ -42,14 +45,14 @@ public class UdpServer {
 
                     @Override
                     protected void initChannel(NioDatagramChannel ch) {
-                        ch.pipeline().addLast(new IdleStateHandler(10,0,0));
+                        ch.pipeline().addLast(new IdleStateHandler(6,0,0));
                         ch.pipeline().addLast(new UdpServerHandler());
                     }
                 });
         try {
-            ChannelFuture future = bootstrap.bind("127.0.0.1", port).sync();
+            ChannelFuture future = bootstrap.bind(udpServerIp, udpServerPort).sync();
             if (future.isSuccess()) {
-                log.info("Netty UdpServer start! port is [{}]", port);
+                log.info("Netty UdpServer start! port is [{}]", udpServerPort);
             }
             future.channel().closeFuture().sync().await();
         } finally {

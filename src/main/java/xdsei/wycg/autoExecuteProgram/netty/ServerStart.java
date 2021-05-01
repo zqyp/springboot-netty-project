@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xdsei.util.Tools;
 import xdsei.wycg.autoExecuteProgram.netty.tcpServer.TcpServer;
+import xdsei.wycg.autoExecuteProgram.netty.udpClient.UdpClient;
 import xdsei.wycg.autoExecuteProgram.netty.udpServer.UdpServer;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,9 @@ public class ServerStart {
 
     @Autowired
     private UdpServer udpServer;
+
+    @Autowired
+    private UdpClient udpClient;
 
     /**
      *  PostConstruct在构造方法初始化、autowired之后执行
@@ -52,6 +56,16 @@ public class ServerStart {
     public void udpServerStart() {
         try {
             udpServer.start();
+        } catch (Exception e) {
+            Tools.logException("netty Server start failed! {}", e);
+        }
+    }
+
+
+    //@PostConstruct
+    public void setUdpClientStart() {
+        try {
+            udpClient.start();
         } catch (Exception e) {
             Tools.logException("netty Server start failed! {}", e);
         }
