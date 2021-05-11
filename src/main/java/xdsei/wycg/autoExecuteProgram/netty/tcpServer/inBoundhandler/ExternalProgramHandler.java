@@ -1,6 +1,5 @@
-package xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler;
+package xdsei.wycg.autoExecuteProgram.netty.tcpServer.inBoundhandler;
 
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;

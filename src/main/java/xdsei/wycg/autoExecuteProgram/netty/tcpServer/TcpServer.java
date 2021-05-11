@@ -2,6 +2,7 @@ package xdsei.wycg.autoExecuteProgram.netty.tcpServer;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -11,7 +12,9 @@ import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import xdsei.util.Tools;
 import xdsei.wycg.autoExecuteProgram.config.NettyServerConfig;
+
 
 /**
  *
@@ -55,17 +58,27 @@ public class TcpServer {
                     // 设置 NioServerSocketChannel 的处理器
                     .handler(new LoggingHandler(LogLevel.INFO))
 
-                    //设置连入服务端的 Client 的 SocketChannel 的处理器
+                    //childHandler 处理 IO
                     .childHandler(new ServerInitializer());
             ChannelFuture future = bootstrap.bind(nettyServerConfig.getPort()).sync();
-            if (future.isSuccess()) {
-                log.info("Netty TcpServer start! port is"+ nettyServerConfig.getPort());
-            }
-        } catch (Exception ex) {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-            bossGroup = null;
-            workerGroup = null;
+
+            // 注册ChannelFutureListener,以便在操作完成时获得通知
+            future.addListener((ChannelFutureListener) future1 -> {
+                if (future1.isSuccess()) {
+                    log.info("Netty TcpServer start! port is"+ nettyServerConfig.getPort());
+                }else {
+                    log.error("Netty TcpServer start failed! port is"+ nettyServerConfig.getPort());
+                    Tools.logException("Netty TcpServer start failed!" , future1.cause());
+                }
+            });
+            // sync -- 同步阻塞 关闭  服务端channel
+            // 直到有一个客户端连接上才会触发 心跳检测
+            future.channel().closeFuture().sync();
+            System.out.println("i am here1");
+        } finally {
+            System.out.println("i am here2");
+            bossGroup.shutdownGracefully().sync();
+            workerGroup.shutdownGracefully().sync();
         }
     }
 

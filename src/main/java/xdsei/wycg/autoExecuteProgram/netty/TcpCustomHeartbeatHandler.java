@@ -92,19 +92,19 @@ public abstract class TcpCustomHeartbeatHandler extends SimpleChannelInboundHand
         ByteBuf buf = ctx.alloc().buffer(5);
         buf.writeInt(5);
         buf.writeByte(PING_MSG);
-        ctx.writeAndFlush(buf);
+        ctx.channel().writeAndFlush(buf);
         heartbeatCount++;
         log.info(name + " sent ping msg to " + ctx.channel().remoteAddress() + ", count: " + heartbeatCount);
     }
 
 
-    private void sendPongMsg(ChannelHandlerContext context) {
-        ByteBuf buf = context.alloc().buffer(5);
+    private void sendPongMsg(ChannelHandlerContext ctx) {
+        ByteBuf buf = ctx.alloc().buffer(5);
         buf.writeInt(5);
         buf.writeByte(PONG_MSG);
-        context.writeAndFlush(buf);
+        ctx.channel().writeAndFlush(buf);
         heartbeatCount++;
-        log.info(name + " sent pong msg to " + context.channel().remoteAddress() + ", count: " + heartbeatCount);
+        log.info(name + " sent pong msg to " + ctx.channel().remoteAddress() + ", count: " + heartbeatCount);
     }
 
 

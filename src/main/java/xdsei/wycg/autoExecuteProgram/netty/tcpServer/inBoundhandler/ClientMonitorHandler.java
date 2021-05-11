@@ -1,9 +1,9 @@
-package xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler;
+package xdsei.wycg.autoExecuteProgram.netty.tcpServer.inBoundhandler;
 
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import xdsei.wycg.autoExecuteProgram.service.ConnectedClientService;
 import xdsei.wycg.autoExecuteProgram.service.ReportRunningStatusService;
@@ -51,7 +51,7 @@ public class ClientMonitorHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        log.info("i am ClientMonitorHandler, i received your msg [{}]", msg);
+        log.info("i am ClientMonitorHandler, i received your msg [{}]", msg.toString());
         // 对收到的信息进行应答
         // 应答代码
         // 暂时模拟下上报状态报文
@@ -61,7 +61,7 @@ public class ClientMonitorHandler extends ChannelInboundHandlerAdapter {
             reportStatusService.doReportRunningStatus();
         }else {
             // 交给业务处理器
-            ctx.fireChannelRead(msg);
+            //ctx.fireChannelRead(msg);
         }
     }
 

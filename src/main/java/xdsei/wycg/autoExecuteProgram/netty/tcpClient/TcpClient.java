@@ -3,6 +3,7 @@ package xdsei.wycg.autoExecuteProgram.netty.tcpClient;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -19,10 +20,8 @@ import java.util.Random;
 
 public class TcpClient {
 
-    EventLoopGroup group = new NioEventLoopGroup();
-
-
     public void start() throws Exception{
+        EventLoopGroup group = new NioEventLoopGroup();
         try{
             Bootstrap b = new Bootstrap();
             Random random = new Random(System.currentTimeMillis());
@@ -31,23 +30,23 @@ public class TcpClient {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .channel(NioSocketChannel.class)
                     .handler(new ClientInitializer());
-            Channel ch = b.connect("127.0.0.1",7777).sync().channel();
+            ChannelFuture f = b.connect("127.0.0.1",7777).sync();
 
             for (int i = 0; i < 10; i++) {
                 String content = "client msg " + i;
-                ByteBuf buf = ch.alloc().buffer();
+                ByteBuf buf = f.channel().alloc().buffer();
                 // 1 个 int 型 32bit = 4 个Byte
-                buf.writeInt(5 + content.getBytes().length);
+                buf.writeInt(content.getBytes().length);
                 // 1 个 Byte
                 buf.writeByte(TcpCustomHeartbeatHandler.CUSTOM_MSG);
                 buf.writeBytes(content.getBytes());
-                ch.writeAndFlush(buf);
+                f.channel().writeAndFlush(buf);
 
                 Thread.sleep(random.nextInt(20000));
             }
-            ch.closeFuture().sync();
+            f.channel().closeFuture().sync();
         } finally {
-            group.shutdownGracefully();
+            group.shutdownGracefully().sync();
         }
     }
 

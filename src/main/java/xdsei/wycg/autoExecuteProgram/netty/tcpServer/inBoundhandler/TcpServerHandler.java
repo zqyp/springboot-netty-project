@@ -1,4 +1,4 @@
-package xdsei.wycg.autoExecuteProgram.netty.tcpServer.handler;
+package xdsei.wycg.autoExecuteProgram.netty.tcpServer.inBoundhandler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -20,14 +20,13 @@ public class TcpServerHandler extends TcpCustomHeartbeatHandler {
 
     @Override
     protected void channelReadCustom(ChannelHandlerContext ctx, ByteBuf byteBuf) {
-
         ByteBuf responseBuf = Unpooled.copiedBuffer(byteBuf);
         byte[] data = new byte[byteBuf.readableBytes() - 5];
         byteBuf.skipBytes(5);
         byteBuf.readBytes(data);
         String content = new String(data);
         log.info("[{}] get content [{}]", name, content);
-        ctx.writeAndFlush(responseBuf);
+        ctx.channel().writeAndFlush(responseBuf);
     }
 
     @Override
@@ -35,6 +34,6 @@ public class TcpServerHandler extends TcpCustomHeartbeatHandler {
         super.handleReaderIdle(ctx);
         log.error("[{}] reader timeout, close it---", ctx.channel().remoteAddress().toString());
         // 关闭客户端连接
-        ctx.close();
+        //ctx.close();
     }
 }
