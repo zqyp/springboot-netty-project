@@ -1,15 +1,11 @@
 package xdsei.wycg.autoExecuteProgram.netty;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,13 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public abstract class UdpCustomHeartbeatHandler extends SimpleChannelInboundHandler<DatagramPacket> {
-
-
-    @Value("${udp.server.ip}")
-    private String udpServerIp;
-
-    @Value("${udp.server.port}")
-    private int udpServerPort;
 
     protected String appName;
     /**
@@ -85,7 +74,7 @@ public abstract class UdpCustomHeartbeatHandler extends SimpleChannelInboundHand
         ByteBuf buffer = ctx.alloc().buffer(5);
         buffer.writeInt(5);
         buffer.writeByte(PING_MSG);
-        ctx.writeAndFlush(new DatagramPacket(buffer, new InetSocketAddress(udpServerIp, udpServerPort)));
+        ctx.writeAndFlush(new DatagramPacket(buffer, new InetSocketAddress("127.0.0.1", 6660)));
         // ctx.channel().remoteAddress() == null
         log.info(appName + " send ping msg to server");
     }
