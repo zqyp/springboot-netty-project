@@ -8,6 +8,7 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,9 +26,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public abstract class UdpCustomHeartbeatHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
+
+    @Value("${udp.server.ip}")
+    private String udpServerIp;
+
+    @Value("${udp.server.port}")
+    private int udpServerPort;
+
     protected String appName;
-    public static final String PING_MSG = "ping";
-    public static final String PONG_MSG = "pong";
+    /**
+     * 客户端发送的报文格式：
+     *                    [报文长度(4 byte)] [消息类型(1 byte)] [消息内容(n bytes)]
+     */
+    public static final byte PING_MSG = 1;
+    public static final byte PONG_MSG = 2;
+    public static final byte CUSTOM_MSG = 3;
+    /**
+     * 消息类型的索引
+     */
+    public static final int DATAGRAM_TYPE_INDEX = 4;
+
     /**
      * 判断服务端是否还连接，客户端 ping 服务端，udpClientPingCount++, 客户端收到 pong 后重置为 0。
      */
@@ -40,11 +58,10 @@ public abstract class UdpCustomHeartbeatHandler extends SimpleChannelInboundHand
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
-        if(PING_MSG.equalsIgnoreCase(msg.content().toString(CharsetUtil.UTF_8))) {
-            // 服务端收到客户端的请求
+        ByteBuf content = msg.content();
+        if(PING_MSG == content.getByte(DATAGRAM_TYPE_INDEX)) {
             sendPongMsg(ctx, msg);
-        } else if(PONG_MSG.equalsIgnoreCase(msg.content().toString(CharsetUtil.UTF_8))) {
-            // 客户端收到服务端的回应
+        } else if(PONG_MSG == content.getByte(DATAGRAM_TYPE_INDEX)) {
             log.info("[{}] get pong msg from [{}]", appName, msg.sender());
             udpClientPingCount.set(0);
         } else {
@@ -59,28 +76,32 @@ public abstract class UdpCustomHeartbeatHandler extends SimpleChannelInboundHand
      */
     protected abstract void channelReadCustom(ChannelHandlerContext ctx, DatagramPacket packet);
 
+
     /**
-     * 服务端对 客户端的 ping 消息回 pong
+     * ping 报文类型：[字节长度 4 bytes] [消息类型 1 byte]
      * @param ctx ctx
-     * @param msg m
      */
-    protected void sendPongMsg(ChannelHandlerContext ctx, DatagramPacket msg) {
-        ByteBuf responseBuf = Unpooled.copiedBuffer(PONG_MSG, CharsetUtil.UTF_8);
-        DatagramPacket datagramPacket = new DatagramPacket(responseBuf, msg.sender());
-        ctx.writeAndFlush(datagramPacket);
-        log.info("[{}] send pong msg to [{}]...", appName, msg.sender());
+    protected void sendPingMsg(ChannelHandlerContext ctx) {
+        ByteBuf buffer = ctx.alloc().buffer(5);
+        buffer.writeInt(5);
+        buffer.writeByte(PING_MSG);
+        ctx.writeAndFlush(new DatagramPacket(buffer, new InetSocketAddress(udpServerIp, udpServerPort)));
+        // ctx.channel().remoteAddress() == null
+        log.info(appName + " send ping msg to server");
     }
 
 
     /**
-     * 客户端 ping 服务端
+     * pong 报文类型：[字节长度 4 bytes] [消息类型 1 byte]
      * @param ctx ctx
      */
-    protected void sendPingMsg(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(PING_MSG,CharsetUtil.UTF_8)
-                , new InetSocketAddress("127.0.0.1", 6660)));
-        // ctx.channel().remoteAddress() == null
-        log.info(appName + " send ping msg to server");
+    protected void sendPongMsg(ChannelHandlerContext ctx, DatagramPacket msg) {
+        ByteBuf buffer = ctx.alloc().buffer(5);
+        buffer.writeInt(5);
+        buffer.writeByte(PONG_MSG);
+        DatagramPacket datagramPacket = new DatagramPacket(buffer, msg.sender());
+        ctx.writeAndFlush(datagramPacket);
+        log.info("[{}] send pong msg to [{}]...", appName, msg.sender());
     }
 
 

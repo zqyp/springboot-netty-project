@@ -1,6 +1,7 @@
 package xdsei.wycg.autoExecuteProgram.netty.udpClient;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -13,6 +14,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import xdsei.wycg.autoExecuteProgram.netty.UdpCustomHeartbeatHandler;
 import xdsei.wycg.autoExecuteProgram.netty.udpClient.handler.UdpClientHandler;
 
 import java.net.InetSocketAddress;
@@ -49,9 +51,13 @@ public class UdpClient {
         try {
             Channel ch = bootstrap.bind(0).sync().channel();
             for (int i = 0; i < 10; i++) {
-                ch.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer("Hello Server..."
-                        , CharsetUtil.UTF_8)
-                        , new InetSocketAddress(udpServerIp, udpServerPort)));
+                String content = "i am udpClient, i send msg to you..."+ i;
+                ByteBuf buffer = ch.alloc().buffer();
+                buffer.writeInt(5 + content.getBytes().length);
+                buffer.writeByte(UdpCustomHeartbeatHandler.CUSTOM_MSG);
+                buffer.writeBytes(content.getBytes());
+
+                ch.writeAndFlush(new DatagramPacket(buffer, new InetSocketAddress(udpServerIp, udpServerPort)));
 
                 Thread.sleep(random.nextInt(20000));
             }

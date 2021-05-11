@@ -43,7 +43,7 @@ public class UdpClientHandler extends UdpCustomHeartbeatHandler {
         udpClientPingCount.getAndIncrement();
         if(udpClientPingCount.get() >= 2) {
             // 服务端掉线
-            log.error("[{}] disConnected...",appName);
+            log.error("udpServer disConnected...");
         }
     }
 

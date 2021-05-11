@@ -1,5 +1,6 @@
 package xdsei.wycg.autoExecuteProgram.netty.udpServer.handler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
@@ -30,8 +31,11 @@ public class UdpServerHandler extends UdpCustomHeartbeatHandler {
      */
     @Override
     public void channelReadCustom(ChannelHandlerContext ctx, DatagramPacket packet) {
-        String msgInfo = packet.content().toString(CharsetUtil.UTF_8);
-        log.info("i am udpServer, i receive msg is [{}]", msgInfo);
+        ByteBuf byteBuf = packet.content();
+        int packetLength = byteBuf.readInt();
+        byteBuf.skipBytes(1);
+        String content = byteBuf.toString(CharsetUtil.UTF_8);
+        log.info("i am udpServer, i received [{}] bytes, and content is [{}]", packetLength, content);
     }
 
 
@@ -43,8 +47,8 @@ public class UdpServerHandler extends UdpCustomHeartbeatHandler {
     protected void handleReaderIdle(ChannelHandlerContext ctx) {
         super.handleReaderIdle(ctx);
         // do something 很可能客户端掉线
-        log.error("Client disConnected...");
-    }
+        log.error("udpClient disConnected...");
+}
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

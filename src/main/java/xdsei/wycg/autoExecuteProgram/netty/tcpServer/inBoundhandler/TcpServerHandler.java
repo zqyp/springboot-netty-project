@@ -22,10 +22,11 @@ public class TcpServerHandler extends TcpCustomHeartbeatHandler {
     protected void channelReadCustom(ChannelHandlerContext ctx, ByteBuf byteBuf) {
         ByteBuf responseBuf = Unpooled.copiedBuffer(byteBuf);
         byte[] data = new byte[byteBuf.readableBytes() - 5];
+        int totalBytes = byteBuf.getInt(0);
         byteBuf.skipBytes(5);
         byteBuf.readBytes(data);
         String content = new String(data);
-        log.info("[{}] get content [{}]", name, content);
+        log.info("[{}] receive [{}] bytes, and get content is [{}]", name, totalBytes, content);
         ctx.channel().writeAndFlush(responseBuf);
     }
 

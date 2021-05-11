@@ -33,7 +33,7 @@ public class ServerStart {
     /**
      *  PostConstruct在构造方法初始化、autowired之后执行
      */
-    @PostConstruct
+    //@PostConstruct
     public void tcpServerStart() {
         try {
             tcpServer.start();
@@ -52,7 +52,7 @@ public class ServerStart {
     }
 
 
-    //@PostConstruct
+    @PostConstruct
     public void udpServerStart() {
         try {
             udpServer.start();

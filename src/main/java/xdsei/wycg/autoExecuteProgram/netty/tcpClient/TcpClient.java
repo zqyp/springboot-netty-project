@@ -36,7 +36,7 @@ public class TcpClient {
                 String content = "client msg " + i;
                 ByteBuf buf = f.channel().alloc().buffer();
                 // 1 个 int 型 32bit = 4 个Byte
-                buf.writeInt(content.getBytes().length);
+                buf.writeInt(5 + content.getBytes().length);
                 // 1 个 Byte
                 buf.writeByte(TcpCustomHeartbeatHandler.CUSTOM_MSG);
                 buf.writeBytes(content.getBytes());

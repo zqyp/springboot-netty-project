@@ -19,13 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class TcpCustomHeartbeatHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
+    /**
+     * 客户端发送的报文格式：
+     *                    [报文长度(4 byte)] [消息类型(1 byte)] [消息内容(n bytes)]
+     */
     public static final byte PING_MSG = 1;
     public static final byte PONG_MSG = 2;
     public static final byte CUSTOM_MSG = 3;
     protected String name;
     private int heartbeatCount = 0;
     /**
-     * 第五个字节是报文类型
+     * 报文类型的索引
      */
     public static final int DATAGRAM_TYPE_INDEX = 4;
 
@@ -88,6 +92,10 @@ public abstract class TcpCustomHeartbeatHandler extends SimpleChannelInboundHand
     }
 
 
+    /**
+     * ping 报文类型：[字节长度] [消息类型]
+     * @param ctx ctx
+     */
     protected void sendPingMsg(ChannelHandlerContext ctx) {
         ByteBuf buf = ctx.alloc().buffer(5);
         buf.writeInt(5);
@@ -98,6 +106,10 @@ public abstract class TcpCustomHeartbeatHandler extends SimpleChannelInboundHand
     }
 
 
+    /**
+     * pong 报文类型：[字节长度] [消息类型]
+     * @param ctx ctx
+     */
     private void sendPongMsg(ChannelHandlerContext ctx) {
         ByteBuf buf = ctx.alloc().buffer(5);
         buf.writeInt(5);
