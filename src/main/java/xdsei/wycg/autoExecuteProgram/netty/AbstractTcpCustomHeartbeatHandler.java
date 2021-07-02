@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2021/4/29
  */
 @Slf4j
-public abstract class TcpCustomHeartbeatHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public abstract class AbstractTcpCustomHeartbeatHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     /**
      * 客户端发送的报文格式：
@@ -33,7 +33,7 @@ public abstract class TcpCustomHeartbeatHandler extends SimpleChannelInboundHand
      */
     public static final int DATAGRAM_TYPE_INDEX = 4;
 
-    public TcpCustomHeartbeatHandler(String name) {
+    public AbstractTcpCustomHeartbeatHandler(String name) {
         this.name = name;
     }
 
