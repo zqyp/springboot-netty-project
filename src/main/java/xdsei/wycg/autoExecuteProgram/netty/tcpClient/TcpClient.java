@@ -8,7 +8,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import xdsei.wycg.autoExecuteProgram.netty.TcpCustomHeartbeatHandler;
+import xdsei.wycg.autoExecuteProgram.netty.AbstractTcpCustomHeartbeatHandler;
 
 import java.util.Random;
 
@@ -38,7 +38,7 @@ public class TcpClient {
                 // 1 个 int 型 32bit = 4 个Byte
                 buf.writeInt(5 + content.getBytes().length);
                 // 1 个 Byte
-                buf.writeByte(TcpCustomHeartbeatHandler.CUSTOM_MSG);
+                buf.writeByte(AbstractTcpCustomHeartbeatHandler.CUSTOM_MSG);
                 buf.writeBytes(content.getBytes());
                 f.channel().writeAndFlush(buf);
 

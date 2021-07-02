@@ -4,7 +4,7 @@ package xdsei.wycg.autoExecuteProgram.netty.tcpClient.handler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import xdsei.wycg.autoExecuteProgram.netty.TcpCustomHeartbeatHandler;
+import xdsei.wycg.autoExecuteProgram.netty.AbstractTcpCustomHeartbeatHandler;
 
 /**
  * @author ZPww
@@ -12,7 +12,7 @@ import xdsei.wycg.autoExecuteProgram.netty.TcpCustomHeartbeatHandler;
  */
 
 @Slf4j
-public class TcpClientHandler extends TcpCustomHeartbeatHandler {
+public class TcpClientHandler extends AbstractTcpCustomHeartbeatHandler {
 
     public TcpClientHandler() {
         super("Client");

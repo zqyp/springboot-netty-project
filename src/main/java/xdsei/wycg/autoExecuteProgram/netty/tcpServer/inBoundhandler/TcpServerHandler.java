@@ -4,14 +4,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import xdsei.wycg.autoExecuteProgram.netty.TcpCustomHeartbeatHandler;
+import xdsei.wycg.autoExecuteProgram.netty.AbstractTcpCustomHeartbeatHandler;
 
 /**
  * @author ZQYP
  * @since 2021/4/30
  */
 @Slf4j
-public class TcpServerHandler extends TcpCustomHeartbeatHandler {
+public class TcpServerHandler extends AbstractTcpCustomHeartbeatHandler {
 
 
     public TcpServerHandler() {
