@@ -5,8 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import xdsei.wycg.autoExecuteProgram.netty.UdpCustomHeartbeatHandler;
-
+import xdsei.wycg.autoExecuteProgram.netty.AbstractUdpCustomHeartbeatHandler;
 
 
 /**
@@ -17,7 +16,7 @@ import xdsei.wycg.autoExecuteProgram.netty.UdpCustomHeartbeatHandler;
  * @since 2021/4/28
  */
 @Slf4j
-public class UdpServerHandler extends UdpCustomHeartbeatHandler {
+public class UdpServerHandler extends AbstractUdpCustomHeartbeatHandler {
 
     public UdpServerHandler() {
         super("Server");
