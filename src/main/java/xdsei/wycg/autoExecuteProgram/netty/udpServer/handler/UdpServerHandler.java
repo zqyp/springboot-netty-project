@@ -9,7 +9,7 @@ import xdsei.wycg.autoExecuteProgram.netty.AbstractUdpCustomHeartbeatHandler;
 
 
 /**
- * server 收到 某一个客户端发来的消息，即DatagramPacket，packet里存储着发送端的 ip+port
+ * 12server 收到 某一个客户端发来的消息，即DatagramPacket，packet里存储着发送端的 ip+port
  * client 要给服务端发送消息需要指定 ip+host
  *  *
  * @author ZQYP
